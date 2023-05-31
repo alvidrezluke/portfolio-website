@@ -9,4 +9,4 @@ FROM alpine:latest
 COPY --from=build ./target/release/portfolio-website ./portfolio-website
 
 EXPOSE 8080
-CMD ["portfolio-website"]
+CMD ["./portfolio-website"]
