@@ -2,7 +2,7 @@ FROM rust:1.69.0 as build
 
 COPY . .
 
-RUN cargo build --release .
+RUN cargo build --release
 
 FROM alpine:latest
 
