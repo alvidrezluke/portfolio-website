@@ -23,5 +23,6 @@ FROM debian:buster-slim
 
 COPY --from=build portfolio-website/target/release/portfolio-website .
 
+EXPOSE 8080
 CMD ["./portfolio-website"]
 
