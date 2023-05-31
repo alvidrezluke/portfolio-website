@@ -16,7 +16,7 @@ RUN rm src/*.rs
 COPY ./src ./src
 
 # Build for release
-RUN rm ./target/release/deps/portfolio-website*
+# RUN rm ./target/release/deps/portfolio-website*
 RUN cargo build --release
 
 FROM debian:buster-slim
