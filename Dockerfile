@@ -1,12 +1,12 @@
 FROM rust:1.69.0 as build
 
-WORKDIR /usr/src/portfolio-website
 COPY . .
 
-RUN cargo install --path .
+RUN cargo build --release .
 
 FROM alpine:latest
 
-COPY --from=build /usr/local/cargo/bin/portfolio-website /usr/local/bin/portfolio-website
+COPY --from=build ./target/release/portfolio-website ./portfolio-website
 
+EXPOSE 8080
 CMD ["portfolio-website"]
