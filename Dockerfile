@@ -1,13 +1,27 @@
 FROM rust:1.69.0 as build
 
-COPY . .
+# Create an empty shell project
+RUN USER=root cargo new --bin portfolio-website
+WORKDIR /portfolio-website
 
+# Copy manifests
+COPY ./Cargo.lock ./Cargo.lock
+COPY ./Cargo.toml ./Cargo.toml
+
+# Build step to cache dependencies
+RUN cargo build --release
+RUN rm src/*.rs
+
+# Copy source tree
+COPY ./src ./src
+
+# Build for release
+RUN rm./target/release/deps/portfolio-website*
 RUN cargo build --release
 
-FROM alpine:latest
+FROM debian:buster-slim
 
-COPY --from=build ./target/release/portfolio-website ./portfolio-website
+COPY --from=build portfolio-website/target/release/portfolio-website .
 
-EXPOSE 8080
-#CMD ["./portfolio-website"]
+CMD ["./portfolio-website"]
 
