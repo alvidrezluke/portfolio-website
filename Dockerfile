@@ -1,37 +1,12 @@
-FROM rust:1.43 as builder
-RUN USER=root cargo new --bin portfolio-website
-WORKDIR ./portfolio-website
-COPY ./Cargo.toml ./Cargo.toml
-RUN cargo build --release
-RUN rm src/*.rs
+FROM rust:1.69.0 as build
 
-ADD . ./
+WORKDIR /usr/src/portfolio-website
+COPY . .
 
-RUN rm ./target/release/deps/portfolio_website*
-RUN cargo build --release
+RUN cargo install --path .
 
-FROM debian:buster-slim
-ARG APP=/usr/src/app
+FROM alpine:latest
 
-RUN apt-get-update \
-    && apt-get install -y ca-certificates tzdata \
-    && rm -rf /var/lib/apt/lists/*
+COPY --from=build /usr/local/cargo/bin/portfolio-website /usr/local/bin/portfolio-website
 
-EXPOSE 8001
-
-ENV TZ=Etc/UTC \
-    APP_USER=appuser
-
-RUN groupadd $APP_USER \
-    && useradd -g $APP_USER $APP_USER \
-    && mkdir -p ${APP}
-
-COPY --from=builder /portfolio-website/target/release/portfolio-website ${APP}/portfolio-website
-
-RUN chown -R $APP_USER:$APP_USER ${APP}
-
-USER $APP_USER
-
-WORKDIR ${APP}
-
-CMD ["./portfolio-website"]
+CMD ["portfolio-website"]
